@@ -1,3 +1,6 @@
+import os
+
+import psycopg2
 from signalrcore.hub_connection_builder import HubConnectionBuilder
 import logging
 import requests
@@ -11,11 +14,21 @@ class App:
         self.TICKS = 10
 
         # To be configured by your team
-        self.HOST = None  # Setup your host here
-        self.TOKEN = None  # Setup your token here
-        self.T_MAX = None  # Setup your max temperature here
-        self.T_MIN = None  # Setup your min temperature here
-        self.DATABASE_URL = None  # Setup your database here
+        self.HOST = os.getenv('HOST')  # Setup your host here
+        self.TOKEN = os.getenv('TOKEN')  # Setup your token here
+        self.T_MAX = os.getenv('T_MAX')  # Setup your max temperature here
+        self.T_MIN = os.getenv('T_MIN')  # Setup your min temperature here
+        #self.DATABASE_URL = os.getenv('')  # Setup your database here
+        try:
+            self.connection = psycopg2.connect(
+                host=os.getenv('DB_HOST'),
+                database=os.getenv('DB_NAME'),
+                user=os.getenv('DB_USER'),
+                password=os.getenv('DB_PASSWORD'),
+                port=os.getenv('DB_PORT')
+            )
+        except psycopg2.Error as e:
+            print("Error connecting to the database: ", e)
 
     def __del__(self):
         if self._hub_connection != None:
@@ -55,31 +68,36 @@ class App:
     def on_sensor_data_received(self, data):
         """Callback method to handle sensor data on reception."""
         try:
+            print(data[0])
             print(data[0]["date"] + " --> " + data[0]["data"], flush=True)
             timestamp = data[0]["date"]
             temperature = float(data[0]["data"])
-            self.take_action(temperature)
-            self.save_event_to_database(timestamp, temperature)
+            etat = self.take_action(temperature)
+            self.save_event_to_database(timestamp, temperature,etat)
         except Exception as err:
             print(err)
 
     def take_action(self, temperature):
         """Take action to HVAC depending on current temperature."""
         if float(temperature) >= float(self.T_MAX):
-            self.send_action_to_hvac("TurnOnAc")
+            return self.send_action_to_hvac("TurnOnAc")
         elif float(temperature) <= float(self.T_MIN):
-            self.send_action_to_hvac("TurnOnHeater")
+            return self.send_action_to_hvac("TurnOnHeater")
 
     def send_action_to_hvac(self, action):
         """Send action query to the HVAC service."""
         r = requests.get(f"{self.HOST}/api/hvac/{self.TOKEN}/{action}/{self.TICKS}")
         details = json.loads(r.text)
         print(details, flush=True)
+        return details["Response"]
 
-    def save_event_to_database(self, timestamp, temperature):
+    def save_event_to_database(self, timestamp, temperature,etat):
         """Save sensor data into database."""
         try:
-            # To implement
+            cur = self.connection.cursor()
+            cur.execute("INSERT INTO sensor (temperature, heure, etat) VALUES (%s, %s, %s) ON CONFLICT (id) DO NOTHING", (temperature, timestamp, etat))
+            self.connection.commit()
+            cur.close()
             pass
         except requests.exceptions.RequestException as e:
             # To implement
