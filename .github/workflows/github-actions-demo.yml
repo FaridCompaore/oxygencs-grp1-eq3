@@ -20,19 +20,17 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pipenv
-          pipenv install --dev
+          pip install -r requirements.txt
+          pip install pytest pylint black
 
-      - name: Run integration tests with pytest
+      - name: Run integration tests
         run: |
-          pipenv run python -m pytest path/to/your/integration_tests_directory --disable-warnings
-        working-directory: ${{ github.workspace }}
+          pytest --disable-warnings --integration-tests
 
       - name: Lint and format code
         run: |
-          pipenv run pylint .
-          pipenv run black .
-        working-directory: ${{ github.workspace }}
+          pylint .
+          black .
         
       - name: Build Docker image
         if: github.ref == 'refs/heads/main'
