@@ -14,4 +14,8 @@ def test_addition():
     assert 11 + 1 == 12
 
 
+def test_addition():
+    assert 11 + 11 == 22
+
+
 # Ajoutez d'autres tests selon les fonctionnalités de votre application OxygenCS
