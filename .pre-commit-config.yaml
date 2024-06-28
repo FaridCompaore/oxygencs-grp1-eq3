@@ -2,6 +2,8 @@
 # pipenv install pylint black pytest --dev
 # pip install pre-commit
 # pre-commit autoupdate
+# pre-commit run --all-files
+
 repos:
 
 
@@ -12,6 +14,12 @@ repos:
 
   - repo: local
     hooks:
+      - id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
+        pass_filenames: false
       - id: pytest
         name: pytest
         entry: pytest -v
