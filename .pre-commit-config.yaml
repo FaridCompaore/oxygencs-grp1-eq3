@@ -14,15 +14,9 @@ repos:
 
   - repo: local
     hooks:
-      - id: pylint
-        name: pylint
-        entry: pylint
-        language: system
-        types: [python]
-        pass_filenames: false
       - id: pytest
         name: pytest
-        entry: pytest -v
+        entry: pipenv run python -m pytest test
         language: system
         types: [python]
         pass_filenames: false

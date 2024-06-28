@@ -7,7 +7,7 @@ def test_addition():
 
 
 def test_subtraction():
-    assert 5 - 3 == 22
+    assert 5 - 3 == 2
 
 
 # Ajoutez d'autres tests selon les fonctionnalités de votre application OxygenCS
