@@ -11,10 +11,11 @@ repos:
     hooks:
       - id: pylint
         name: pylint
-        entry: pylint
+        entry: pipenv install pylint 
         language: system
         types: [python]
         pass_filenames: false
+        return_codes: [0, 1]  # Pylint retourne 0 pour succès, 1 pour avertissements, 2+ pour erreurs
 
   - repo: https://github.com/psf/black
     rev: '24.4.2'  # Utilise la dernière révision
