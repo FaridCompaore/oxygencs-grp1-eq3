@@ -21,6 +21,11 @@ repos:
     rev: '24.4.2'  # Utilise la dernière révision
     hooks:
       - id: black
+        name: black
+        entry: pipenv run black
+        language: system
+        types: [python]
+        pass_filenames: false
 
   - repo: local
 
