@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install Pipenv and dependencies
+        run: |
+          pip install pipenv
+          pipenv install --dev
+
+      - name: Run tests
+        run: pipenv run python -m pytest test
+
+      - name: Lint and format code
+        run: |
+          pipenv run pylint src test
+          pipenv run black src test
+
+      - name: Build Docker image
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker build -t faridfreestyle11/oxygencs_container:latest .
+          docker tag faridfreestyle11/oxygencs_container:latest faridfreestyle11/oxygencs_container:${{ github.run_number }}
+        env:
+          DOCKER_BUILDKIT: 1
+
+      - name: Push Docker image to DockerHub
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+          docker push faridfreestyle11/oxygencs_container:latest
+          docker push faridfreestyle11/oxygencs_container:${{ github.run_number }}
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
