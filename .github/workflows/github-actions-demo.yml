@@ -18,34 +18,33 @@ jobs:
         with:
           python-version: '3.8'
 
-      - name: Install dependencies
+      - name: Install Pipenv and dependencies
         run: |
-          pip install pytest pylint black pipenv
+          pip install pipenv
+          pipenv install --dev
 
       - name: Run tests
-        run: |
-          pipenv run python -m pytest test
+        run: pipenv run python -m pytest test
 
       - name: Lint and format code
         run: |
-          pylint .
-          black .
-        
+          pipenv run pylint .
+          pipenv run black .
+
       - name: Build Docker image
         if: github.ref == 'refs/heads/main'
         run: |
-          docker build -t faridfreestyle11@gmail.com/oxygencs_container:latest .
-          docker tag faridfreestyle11@gmail.com/oxygencs_container:latest faridfreestyle11@gmail.com/oxygencs_container:version-tag
+          docker build -t faridfreestyle11/oxygencs_container:latest .
+          docker tag faridfreestyle11/oxygencs_container:latest faridfreestyle11/oxygencs_container:${{ github.run_number }}
         env:
           DOCKER_BUILDKIT: 1
-          BUILD_ID: ${{ github.run_id }}
 
       - name: Push Docker image to DockerHub
         if: github.ref == 'refs/heads/main'
         run: |
           echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
-          docker push faridfreestyle11@gmail.com/oxygencs_container:latest
-          docker push faridfreestyle11@gmail.com/oxygencs_container:version-tag
+          docker push faridfreestyle11/oxygencs_container:latest
+          docker push faridfreestyle11/oxygencs_container:${{ github.run_number }}
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
