@@ -34,6 +34,13 @@ jobs:
       - name: Build Docker image
         if: github.ref == 'refs/heads/main'
         run: |
+          # Ensure .env file is present
+          if [ -f .env ]; then
+            echo ".env file found"
+          else
+            echo ".env file not found"
+            exit 1
+          fi
           docker build -t faridfreestyle11/oxygencs_container:latest .
           docker tag faridfreestyle11/oxygencs_container:latest faridfreestyle11/oxygencs_container:${{ github.run_number }}
         env:
