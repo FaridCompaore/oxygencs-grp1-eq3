@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pytest pylint black
+          pip install pytest pylint black pipenv
 
       - name: Run tests
         run: |
