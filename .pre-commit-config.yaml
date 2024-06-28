@@ -1,1 +1,24 @@
 ## To implement
+# pipenv install pylint black pytest --dev
+# pip install pre-commit
+# pre-commit autoupdate
+repos:
+
+
+  - repo: https://github.com/psf/black
+    rev: '24.4.2'  # Utilise la dernière révision
+    hooks:
+      - id: black
+
+hooks:
+  - id: pytest
+    name: pytest
+    entry: pytest
+    language: system
+    types: [python]
+    pass_filenames: false
+    stages: [commit]
+    additional_dependencies: [pytest]
+
+exclude: '^$'  # Inclure tous les fichiers
+

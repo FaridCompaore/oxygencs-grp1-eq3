@@ -7,13 +7,20 @@ name = "pypi"
 requests = "*"
 signalrcore = "*"
 psycopg2-binary = "*"
+pylint = "*"
+black = "*"
+pytest = "*"
+pre-commit = "*"
 
 [dev-packages]
+pylint = "*"
+black = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.8"
 
 [scripts]
 start = "python src/main.py"
-test = "# To implement"
+test = "python test/test.py"
 lint = "# To implement"

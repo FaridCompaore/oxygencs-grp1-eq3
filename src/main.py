@@ -14,18 +14,18 @@ class App:
         self.TICKS = 10
 
         # To be configured by your team
-        self.HOST = os.getenv('HOST')  # Setup your host here
-        self.TOKEN = os.getenv('TOKEN')  # Setup your token here
-        self.T_MAX = os.getenv('T_MAX')  # Setup your max temperature here
-        self.T_MIN = os.getenv('T_MIN')  # Setup your min temperature here
-        #self.DATABASE_URL = os.getenv('')  # Setup your database here
+        self.HOST = os.getenv("HOST")  # Setup your host here
+        self.TOKEN = os.getenv("TOKEN")  # Setup your token here
+        self.T_MAX = os.getenv("T_MAX")  # Setup your max temperature here
+        self.T_MIN = os.getenv("T_MIN")  # Setup your min temperature here
+        # self.DATABASE_URL = os.getenv('')  # Setup your database here
         try:
             self.connection = psycopg2.connect(
-                host=os.getenv('DB_HOST'),
-                database=os.getenv('DB_NAME'),
-                user=os.getenv('DB_USER'),
-                password=os.getenv('DB_PASSWORD'),
-                port=os.getenv('DB_PORT')
+                host=os.getenv("DB_HOST"),
+                database=os.getenv("DB_NAME"),
+                user=os.getenv("DB_USER"),
+                password=os.getenv("DB_PASSWORD"),
+                port=os.getenv("DB_PORT"),
             )
         except psycopg2.Error as e:
             print("Error connecting to the database: ", e)
@@ -73,7 +73,7 @@ class App:
             timestamp = data[0]["date"]
             temperature = float(data[0]["data"])
             etat = self.take_action(temperature)
-            self.save_event_to_database(timestamp, temperature,etat)
+            self.save_event_to_database(timestamp, temperature, etat)
         except Exception as err:
             print(err)
 
@@ -91,11 +91,14 @@ class App:
         print(details, flush=True)
         return details["Response"]
 
-    def save_event_to_database(self, timestamp, temperature,etat):
+    def save_event_to_database(self, timestamp, temperature, etat):
         """Save sensor data into database."""
         try:
             cur = self.connection.cursor()
-            cur.execute("INSERT INTO sensor (temperature, heure, etat) VALUES (%s, %s, %s) ON CONFLICT (id) DO NOTHING", (temperature, timestamp, etat))
+            cur.execute(
+                "INSERT INTO sensor (temperature, heure, etat) VALUES (%s, %s, %s) ON CONFLICT (id) DO NOTHING",
+                (temperature, timestamp, etat),
+            )
             self.connection.commit()
             cur.close()
             pass
