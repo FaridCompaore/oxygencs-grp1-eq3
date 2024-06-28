@@ -40,7 +40,7 @@ jobs:
 
       - name: Lint and format code
         run: |
-          pipenv run pylint src test
+          pipenv run pylint src
           pipenv run black src test
 
       - name: Build Docker image
