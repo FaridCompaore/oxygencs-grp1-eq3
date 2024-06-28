@@ -20,11 +20,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pytest pylint black pipenv
+          pip install pytest pylint black
 
       - name: Run integration tests
         run: |
-          pipenv run python -m pytest test
+          pytest --disable-warnings --integration-tests
 
       - name: Lint and format code
         run: |
