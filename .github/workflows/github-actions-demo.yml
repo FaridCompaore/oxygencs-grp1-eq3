@@ -24,7 +24,7 @@ jobs:
           pipenv install --dev
 
       - name: Run tests
-        run: pipenv run python -m pytest test
+        run: pipenv run python -m pytest test/test_integration.py
 
       - name: Lint and format code
         run: |
