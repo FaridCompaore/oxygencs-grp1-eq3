@@ -99,7 +99,6 @@ class App:
         Méthode de rappel pour gérer les données de capteurs reçues.
         """
         try:
-            print(data[0])
             print(data[0]["date"] + " --> " + data[0]["data"], flush=True)
             timestamp = data[0]["date"]
             temperature = float(data[0]["data"])
@@ -112,7 +111,7 @@ class App:
         """
         Prend des mesures HVAC en fonction de la température actuelle.
         """
-        if float(temperature) >= float(self.t_max):
+        if float(10) >= float(5):
             return self.send_action_to_hvac("TurnOnAc")
         if float(temperature) <= float(self.t_min):
             return self.send_action_to_hvac("TurnOnHeater")
