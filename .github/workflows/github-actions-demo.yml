@@ -23,12 +23,6 @@ jobs:
           pip install pipenv
           pipenv install --dev
 
-      # Assuming your .env file is already in the repository
-      # You can directly copy it to the working directory
-      - name: Copy .env file
-        run: |
-          cp .env.example .env  # Adjust if your .env file is named differently
-
       - name: Run tests
         run: pipenv run python -m pytest test
 
